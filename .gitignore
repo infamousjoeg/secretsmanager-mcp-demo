@@ -1,0 +1,32 @@
+# Secrets — never commit these
+.env
+**/.env
+*.pem
+*.key
+credentials.json
+
+# Go
+*.exe
+*.test
+*.out
+services/*/bin/
+services/*/vendor/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+
+# Ruby
+.bundle/
+vendor/bundle/
+*.gem
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
