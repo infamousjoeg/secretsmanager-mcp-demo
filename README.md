@@ -4,6 +4,7 @@ A < 5-minute live demo of the Idira Secrets Manager MCP server. The headline: in
 
 Built around the `localhost/cyberark/mcp-server:0.1.0-beta` MCP server against an Idira Secrets Manager, SaaS tenant.
 
+Download it today at [](https://marketplace.cyberark.com).
 ---
 
 ## What the audience sees
