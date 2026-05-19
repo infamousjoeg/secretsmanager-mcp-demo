@@ -1,8 +1,8 @@
 # SecretsManagerMCP — Agentic Remediation Demo
 
-A < 5-minute live demo of the CyberArk Secrets Manager MCP server. The headline: instead of executing a fixed remediation script, an AI agent reads a real polyglot codebase, **decides** the right branch/workload structure, and drives the MCP end-to-end to migrate every hardcoded secret to Secrets Manager — generating language-matched fetch code and editing each source file in place.
+A < 5-minute live demo of the Idira Secrets Manager MCP server. The headline: instead of executing a fixed remediation script, an AI agent reads a real polyglot codebase, **decides** the right branch/workload structure, and drives the MCP end-to-end to migrate every hardcoded secret to Secrets Manager — generating language-matched fetch code and editing each source file in place.
 
-Built around the `localhost/cyberark/mcp-server:0.1.0-beta` MCP server against a CyberArk Conjur Cloud SaaS tenant.
+Built around the `localhost/idira/mcp-server:0.1.0-beta` MCP server against an Idira Conjur Cloud SaaS tenant.
 
 ---
 
@@ -22,8 +22,8 @@ Built around the `localhost/cyberark/mcp-server:0.1.0-beta` MCP server against a
 ## Prerequisites
 
 - Docker Desktop running.
-- The MCP image loaded locally: `docker images | grep cyberark/mcp-server` should show `0.1.0-beta`.
-- A CyberArk Identity OAuth2 client registered in your tenant, with the correct redirect URI (see *Port choice* below).
+- The MCP image loaded locally: `docker images | grep idira/mcp-server` should show `0.1.0-beta`.
+- An Idira Identity OAuth2 client registered in your tenant, with the correct redirect URI (see *Port choice* below).
 - An MCP client that supports stdio MCP servers (this demo uses Claude Code).
 - One free TCP port on the host for the OAuth callback (default 8080; we use 8081 because 8080 was occupied).
 
@@ -41,12 +41,12 @@ The `.mcp.json` in this repo:
       "args": [
         "run", "--rm", "-i",
         "-p", "8081:8081",
-        "-e", "CONJUR_API_URL=<your-tenant>.secretsmgr.cyberark.cloud",
+        "-e", "CONJUR_API_URL=<your-tenant>.secretsmgr.idira.cloud",
         "-e", "OAUTH_APPLICATION_ID=<your-oauth-app-id>",
         "-e", "OAUTH_CLIENT_ID=<your-oauth-client-id>",
-        "-e", "OAUTH_ISSUER_URI=https://<your-pod>.id.cyberark.cloud",
+        "-e", "OAUTH_ISSUER_URI=https://<your-pod>.id.idira.cloud",
         "-e", "OAUTH_REDIRECT_URI=http://localhost:8081/callback",
-        "localhost/cyberark/mcp-server:0.1.0-beta"
+        "localhost/idira/mcp-server:0.1.0-beta"
       ]
     }
   }
@@ -55,10 +55,10 @@ The `.mcp.json` in this repo:
 
 ### Gotchas that bit us (worth knowing)
 
-1. **`OAUTH_ISSUER_URI` is your Identity tenant URL — and your tenant alias may not be it.** CyberArk Identity assigns each tenant a *pod* hostname of the form `<podid>.id.cyberark.cloud`, where `<podid>` is something like `abc1234`. Your friendly tenant alias such as `<alias>.id.cyberark.cloud` may not even resolve. Two reliable ways to find your real issuer:
-   1. Open `https://<alias>.cyberark.cloud/` in a browser — it redirects login to your pod URL.
-   2. Run `curl https://<pod>.id.cyberark.cloud/.well-known/openid-configuration` and confirm the `issuer` field matches.
-2. **Port mapping must align everywhere.** The MCP's callback server binds to whatever port is in `OAUTH_REDIRECT_URI` — so `-p H:C` must satisfy `H == C == port(OAUTH_REDIRECT_URI) == port(OAuth client's registered redirect URI)`. If any of those four disagree, the browser redirect lands on a port nobody is listening on. The CyberArk docs only document the 8080:8080 default and don't flag this constraint.
+1. **`OAUTH_ISSUER_URI` is your Identity tenant URL — and your tenant alias may not be it.** Idira Identity assigns each tenant a *pod* hostname of the form `<podid>.id.idira.cloud`, where `<podid>` is something like `abc1234`. Your friendly tenant alias such as `<alias>.id.idira.cloud` may not even resolve. Two reliable ways to find your real issuer:
+   1. Open `https://<alias>.idira.cloud/` in a browser — it redirects login to your pod URL.
+   2. Run `curl https://<pod>.id.idira.cloud/.well-known/openid-configuration` and confirm the `issuer` field matches.
+2. **Port mapping must align everywhere.** The MCP's callback server binds to whatever port is in `OAUTH_REDIRECT_URI` — so `-p H:C` must satisfy `H == C == port(OAUTH_REDIRECT_URI) == port(OAuth client's registered redirect URI)`. If any of those four disagree, the browser redirect lands on a port nobody is listening on. The Idira docs only document the 8080:8080 default and don't flag this constraint.
 3. **`CONJUR_API_URL` must not include `https://`.** The 0.1.0-beta binary prepends `https://` unconditionally and will try to hit `https://https://...`, producing a cryptic `dial tcp: lookup https on ...:53: no such host` error. The official docs example **does** include the scheme — the docs are wrong for this version.
 
 ---
@@ -67,7 +67,7 @@ The `.mcp.json` in this repo:
 
 In your MCP client:
 
-1. Call `get_auth_url` — opens a browser to the CyberArk Identity tenant login.
+1. Call `get_auth_url` — opens a browser to the Idira Identity tenant login.
 2. Log in.
 3. Browser redirects to `http://localhost:8081/callback` and shows a success page.
 4. Call `authenticate` — completes the token exchange.
@@ -118,7 +118,7 @@ Each file is 10–25 lines so diffs read cleanly on a projector. The Ruby file d
 
 ## Cleanup
 
-The MCP exposes no delete tools, and APIv2 has no direct "delete branch" endpoint either. Cleanup is **policy-driven** via `!delete` statements ([statement ref](https://docs.cyberark.com/secrets-manager-saas/latest/en/content/operations/policy/statement-ref-delete.htm), [policy load](https://docs.cyberark.com/secrets-manager-saas/latest/en/content/operations/policy/policy-load.html)).
+The MCP exposes no delete tools, and APIv2 has no direct "delete branch" endpoint either. Cleanup is **policy-driven** via `!delete` statements ([statement ref](https://docs.idira.com/secrets-manager-saas/latest/en/content/operations/policy/statement-ref-delete.htm), [policy load](https://docs.idira.com/secrets-manager-saas/latest/en/content/operations/policy/policy-load.html)).
 
 1. Open [scripts/cleanup.yml](scripts/cleanup.yml).
 2. Replace `<BRANCH>` with the timestamped branch the demo created (e.g. `demo-20260519-184321`).
@@ -135,7 +135,7 @@ The MCP exposes no delete tools, and APIv2 has no direct "delete branch" endpoin
      -H "Authorization: Token token=\"$(printf %s "$ACCESS_TOKEN" | base64)\"" \
      -H "Content-Type: text/plain" \
      --data-binary @scripts/cleanup.yml \
-     https://<your-tenant>.secretsmgr.cyberark.cloud/api/policies/conjur/policy/data
+     https://<your-tenant>.secretsmgr.idira.cloud/api/policies/conjur/policy/data
    ```
 
 4. **Always verify with `list_secrets`** — the demo branch's IDs should be gone. Do not trust the HTTP response; see the gotcha below.
@@ -158,13 +158,13 @@ If verification shows the cascade *didn't* complete, fall back to: (a) `conjur p
 
 - [ ] Token still valid — call `whoami`; if it errors, re-run the auth flow before going live.
 - [ ] `rg` shows 6 hits across 4 files.
-- [ ] MCP container is the latest config: `docker ps --filter ancestor=localhost/cyberark/mcp-server:0.1.0-beta` shows `0.0.0.0:8081->8081/tcp`.
+- [ ] MCP container is the latest config: `docker ps --filter ancestor=localhost/idira/mcp-server:0.1.0-beta` shows `0.0.0.0:8081->8081/tcp`.
 - [ ] A blank terminal pane is ready for the opening `rg`.
 - [ ] Decide ahead of time: if Claude picks weird workload names, you'll let it run (the prompt is the canonical source) — or stop and re-prompt with tighter naming guidance.
 
 ---
 
-## Things worth filing upstream with CyberArk
+## Things worth filing upstream with Idira
 
 - **Docs gap:** the MCP setup page treats `8080` as the only port. Document the constraint that the host port, container port, `OAUTH_REDIRECT_URI` port, and OAuth client's registered redirect URI must all match.
 - **Binary bug:** `CONJUR_API_URL` is double-prefixed with `https://`. Either strip the scheme defensively in the binary or correct the docs example to use a bare hostname.

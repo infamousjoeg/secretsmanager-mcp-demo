@@ -17,8 +17,8 @@ These exist so the demo has something to *fix*. Do not replace them with real va
 
 The maintainer's actual:
 
-- CyberArk Conjur Cloud tenant URL
-- CyberArk Identity tenant (pod) URL
+- Idira Conjur Cloud tenant URL
+- Idira Identity tenant (pod) URL
 - OAuth client ID, application ID, or API keys
 - Any workload API keys generated during demo runs
 - Any `.env` files created by the demo (`.gitignore` blocks them)
@@ -40,4 +40,4 @@ If you find a security issue with how the demo authenticates to Conjur, stores w
 
 ## Upstream issues
 
-For bugs or vulnerabilities in the underlying CyberArk Secrets Manager MCP server, report to CyberArk via their official channels — not here.
+For bugs or vulnerabilities in the underlying Idira Secrets Manager MCP server, report to Idira via their official channels — not here.
