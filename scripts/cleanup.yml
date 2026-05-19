@@ -12,7 +12,7 @@
 #     -H "Authorization: Token token=\"$(printf %s "$ACCESS_TOKEN" | base64)\"" \
 #     -H "Content-Type: text/plain" \
 #     --data-binary @scripts/cleanup.yml \
-#     https://<your-tenant>.secretsmgr.idira.cloud/api/policies/conjur/policy/data
+#     https://<your-tenant>.secretsmgr.cyberark.cloud/api/policies/conjur/policy/data
 #
 # POST is not valid here — it rejects !delete. PUT against the `data` branch
 # is also not allowed. PATCH against `data` is the only working mode.

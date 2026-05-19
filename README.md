@@ -41,10 +41,10 @@ The `.mcp.json` in this repo:
       "args": [
         "run", "--rm", "-i",
         "-p", "8081:8081",
-        "-e", "CONJUR_API_URL=<your-tenant>.secretsmgr.idira.cloud",
+        "-e", "CONJUR_API_URL=<your-tenant>.secretsmgr.cyberark.cloud",
         "-e", "OAUTH_APPLICATION_ID=<your-oauth-app-id>",
         "-e", "OAUTH_CLIENT_ID=<your-oauth-client-id>",
-        "-e", "OAUTH_ISSUER_URI=https://<your-pod>.id.idira.cloud",
+        "-e", "OAUTH_ISSUER_URI=https://<your-pod>.id.cyberark.cloud",
         "-e", "OAUTH_REDIRECT_URI=http://localhost:8081/callback",
         "localhost/cyberark/mcp-server:0.1.0-beta"
       ]
@@ -55,9 +55,9 @@ The `.mcp.json` in this repo:
 
 ### Gotchas that bit us (worth knowing)
 
-1. **`OAUTH_ISSUER_URI` is your Identity tenant URL — and your tenant alias may not be it.** Idira Identity assigns each tenant a *pod* hostname of the form `<podid>.id.idira.cloud`, where `<podid>` is something like `abc1234`. Your friendly tenant alias such as `<alias>.id.idira.cloud` may not even resolve. Two reliable ways to find your real issuer:
-   1. Open `https://<alias>.idira.cloud/` in a browser — it redirects login to your pod URL.
-   2. Run `curl https://<pod>.id.idira.cloud/.well-known/openid-configuration` and confirm the `issuer` field matches.
+1. **`OAUTH_ISSUER_URI` is your Identity tenant URL — and your tenant alias may not be it.** Idira Identity assigns each tenant a *pod* hostname of the form `<podid>.id.cyberark.cloud`, where `<podid>` is something like `abc1234`. Your friendly tenant alias such as `<alias>.id.cyberark.cloud` may not even resolve. Two reliable ways to find your real issuer:
+   1. Open `https://<alias>.cyberark.cloud/` in a browser — it redirects login to your pod URL.
+   2. Run `curl https://<pod>.id.cyberark.cloud/.well-known/openid-configuration` and confirm the `issuer` field matches.
 2. **Port mapping must align everywhere.** The MCP's callback server binds to whatever port is in `OAUTH_REDIRECT_URI` — so `-p H:C` must satisfy `H == C == port(OAUTH_REDIRECT_URI) == port(OAuth client's registered redirect URI)`. If any of those four disagree, the browser redirect lands on a port nobody is listening on. The Idira docs only document the 8080:8080 default and don't flag this constraint.
 3. **`CONJUR_API_URL` must not include `https://`.** The 0.1.0-beta binary prepends `https://` unconditionally and will try to hit `https://https://...`, producing a cryptic `dial tcp: lookup https on ...:53: no such host` error. The official docs example **does** include the scheme — the docs are wrong for this version.
 
@@ -118,7 +118,7 @@ Each file is 10–25 lines so diffs read cleanly on a projector. The Ruby file d
 
 ## Cleanup
 
-The MCP exposes no delete tools, and APIv2 has no direct "delete branch" endpoint either. Cleanup is **policy-driven** via `!delete` statements ([statement ref](https://docs.idira.com/secrets-manager-saas/latest/en/content/operations/policy/statement-ref-delete.htm), [policy load](https://docs.idira.com/secrets-manager-saas/latest/en/content/operations/policy/policy-load.html)).
+The MCP exposes no delete tools, and APIv2 has no direct "delete branch" endpoint either. Cleanup is **policy-driven** via `!delete` statements ([statement ref](https://docs.cyberark.com/secrets-manager-saas/latest/en/content/operations/policy/statement-ref-delete.htm), [policy load](https://docs.cyberark.com/secrets-manager-saas/latest/en/content/operations/policy/policy-load.html)).
 
 1. Open [scripts/cleanup.yml](scripts/cleanup.yml).
 2. Replace `<BRANCH>` with the timestamped branch the demo created (e.g. `demo-20260519-184321`).
@@ -135,7 +135,7 @@ The MCP exposes no delete tools, and APIv2 has no direct "delete branch" endpoin
      -H "Authorization: Token token=\"$(printf %s "$ACCESS_TOKEN" | base64)\"" \
      -H "Content-Type: text/plain" \
      --data-binary @scripts/cleanup.yml \
-     https://<your-tenant>.secretsmgr.idira.cloud/api/policies/conjur/policy/data
+     https://<your-tenant>.secretsmgr.cyberark.cloud/api/policies/conjur/policy/data
    ```
 
 4. **Always verify with `list_secrets`** — the demo branch's IDs should be gone. Do not trust the HTTP response; see the gotcha below.
