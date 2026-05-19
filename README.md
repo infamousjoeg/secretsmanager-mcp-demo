@@ -2,7 +2,7 @@
 
 A < 5-minute live demo of the Idira Secrets Manager MCP server. The headline: instead of executing a fixed remediation script, an AI agent reads a real polyglot codebase, **decides** the right branch/workload structure, and drives the MCP end-to-end to migrate every hardcoded secret to Secrets Manager — generating language-matched fetch code and editing each source file in place.
 
-Built around the `localhost/idira/mcp-server:0.1.0-beta` MCP server against an Idira Conjur Cloud SaaS tenant.
+Built around the `localhost/cyberark/mcp-server:0.1.0-beta` MCP server against an Idira Conjur Cloud SaaS tenant.
 
 ---
 
@@ -22,7 +22,7 @@ Built around the `localhost/idira/mcp-server:0.1.0-beta` MCP server against an I
 ## Prerequisites
 
 - Docker Desktop running.
-- The MCP image loaded locally: `docker images | grep idira/mcp-server` should show `0.1.0-beta`.
+- The MCP image loaded locally: `docker images | grep cyberark/mcp-server` should show `0.1.0-beta`.
 - An Idira Identity OAuth2 client registered in your tenant, with the correct redirect URI (see *Port choice* below).
 - An MCP client that supports stdio MCP servers (this demo uses Claude Code).
 - One free TCP port on the host for the OAuth callback (default 8080; we use 8081 because 8080 was occupied).
@@ -46,7 +46,7 @@ The `.mcp.json` in this repo:
         "-e", "OAUTH_CLIENT_ID=<your-oauth-client-id>",
         "-e", "OAUTH_ISSUER_URI=https://<your-pod>.id.idira.cloud",
         "-e", "OAUTH_REDIRECT_URI=http://localhost:8081/callback",
-        "localhost/idira/mcp-server:0.1.0-beta"
+        "localhost/cyberark/mcp-server:0.1.0-beta"
       ]
     }
   }
@@ -158,7 +158,7 @@ If verification shows the cascade *didn't* complete, fall back to: (a) `conjur p
 
 - [ ] Token still valid — call `whoami`; if it errors, re-run the auth flow before going live.
 - [ ] `rg` shows 6 hits across 4 files.
-- [ ] MCP container is the latest config: `docker ps --filter ancestor=localhost/idira/mcp-server:0.1.0-beta` shows `0.0.0.0:8081->8081/tcp`.
+- [ ] MCP container is the latest config: `docker ps --filter ancestor=localhost/cyberark/mcp-server:0.1.0-beta` shows `0.0.0.0:8081->8081/tcp`.
 - [ ] A blank terminal pane is ready for the opening `rg`.
 - [ ] Decide ahead of time: if Claude picks weird workload names, you'll let it run (the prompt is the canonical source) — or stop and re-prompt with tighter naming guidance.
 

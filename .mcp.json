@@ -19,7 +19,7 @@
         "-e",
         "OAUTH_REDIRECT_URI=http://localhost:8081/callback",
 
-        "localhost/idira/mcp-server:0.1.0-beta"
+        "localhost/cyberark/mcp-server:0.1.0-beta"
       ]
     }
   }
