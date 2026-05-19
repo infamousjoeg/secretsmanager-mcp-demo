@@ -2,7 +2,7 @@
 
 A < 5-minute live demo of the Idira Secrets Manager MCP server. The headline: instead of executing a fixed remediation script, an AI agent reads a real polyglot codebase, **decides** the right branch/workload structure, and drives the MCP end-to-end to migrate every hardcoded secret to Secrets Manager — generating language-matched fetch code and editing each source file in place.
 
-Built around the `localhost/cyberark/mcp-server:0.1.0-beta` MCP server against an Idira Conjur Cloud SaaS tenant.
+Built around the `localhost/cyberark/mcp-server:0.1.0-beta` MCP server against an Idira Secrets Manager, SaaS tenant.
 
 ---
 

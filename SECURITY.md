@@ -17,7 +17,7 @@ These exist so the demo has something to *fix*. Do not replace them with real va
 
 The maintainer's actual:
 
-- Idira Conjur Cloud tenant URL
+- Idira Secrets Manager, SaaS tenant URL
 - Idira Identity tenant (pod) URL
 - OAuth client ID, application ID, or API keys
 - Any workload API keys generated during demo runs
